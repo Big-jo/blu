@@ -25,7 +25,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: yarn run start:prod
+    command: sh -c "yarn migration:run && yarn run start:prod"
 
 volumesdocker-compose up -d:
   postgres_data:

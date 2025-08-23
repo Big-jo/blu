@@ -14,17 +14,12 @@ export class AuthMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request & { user: any }, res: Response, next: NextFunction) {
+    if (req.path === '/merchants' && req.method === 'POST') {
+      return next();
+    }
+
     const apiKey = req.headers['x-api-key'] as string;
     const customerId = req.headers['x-customer-id'] as string;
-
-    if (req.path === '/merchants' && req.method === 'POST') {
-      /**
-       * Ensure that the merchant creation endpoint is accessible without an API key.
-       */
-      return next();
-    } else if (!apiKey) {
-      throw new UnauthorizedException('API key is missing');
-    }
     
     const merchant = await this.merchantService.findByApiKey(apiKey);
     req['merchant'] = merchant;

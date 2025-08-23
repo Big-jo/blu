@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { WalletEntity } from './wallet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TRANSACTION_TYPES } from '../../core/shared/types';
 
 @Injectable()
 export class WalletService {
@@ -27,5 +28,19 @@ export class WalletService {
     }
 
     return wallet;
+  }
+
+  async updateBalance(
+    trx: EntityManager,
+    wallet: WalletEntity,
+    amount: number,
+    type: TRANSACTION_TYPES,
+  ) {
+    const newBalance =
+      type === TRANSACTION_TYPES.CREDIT
+        ? wallet.balance + amount
+        : wallet.balance - amount;
+
+    return trx.save(WalletEntity, { ...wallet, balance: newBalance });
   }
 }

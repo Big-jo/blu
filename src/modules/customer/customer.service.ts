@@ -6,6 +6,8 @@ import { WalletService } from '../wallet/wallet.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { WalletEntity } from '../wallet/wallet.entity';
+import { PageDto } from '../pagination/page.dto';
+import { PageOptionsDto } from '../pagination/page-options.dto';
 import { duplicateErrorHandler } from '../../core/shared/util/duplicate-error-handler.util';
 
 @Injectable()
@@ -54,5 +56,15 @@ export class CustomerService {
     }
 
     return customer;
+  }
+
+  async findAll(merchantId: string, dto: PageOptionsDto) {
+    const [result, count] = await this.customerRepository.findAndCount({
+      where: { merchantId },
+      skip: dto.skip,
+      take: dto.pageSize,
+    });
+
+    return new PageDto(result, count, dto);
   }
 }
