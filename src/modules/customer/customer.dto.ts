@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { AbstractDto } from '../../core/shared/abstract.dto';
 import { CustomerEntity } from './customer.entity';
+import { WalletResponseDto } from '../wallet/wallet.dto';
 
 export class CustomerResponseDto extends AbstractDto {
   @ApiProperty({
@@ -16,10 +17,17 @@ export class CustomerResponseDto extends AbstractDto {
   })
   email: string;
 
+  @ApiProperty({
+    description: 'Balance',
+    type: WalletResponseDto
+  })
+  wallet: WalletResponseDto;
+
   constructor(entity: CustomerEntity) {
     super(entity);
     this.name = entity.name;
     this.email = entity.email;
+    this.wallet = entity.wallet?.toDto();
   }
 }
 

@@ -5,13 +5,14 @@ import { WalletResponseDto } from './wallet.dto';
 
 @Controller('wallets')
 @ApiTags('Wallets')
-@ApiSecurity('x-api-key') // Add ApiSecurity decorator
+@ApiSecurity('x-api-key')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
-  @Get()
-  async findAll(): Promise<WalletResponseDto[]> {
-    const wallets = await this.walletService.findAll();
-    return wallets.map((wallet) => wallet.toDto());
-  }
+  //DEBUG: Uncomment to enable fetching all wallets (not recommended for production)
+  // @Get()
+  // async findAll(): Promise<WalletResponseDto[]> {
+  //   const wallets = await this.walletService.findAll();
+  //   return wallets.map((wallet) => wallet.toDto());
+  // }
 }

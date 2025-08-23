@@ -23,7 +23,7 @@ const schema = Joi.object<DatabaseConfig>({
   port: Joi.number().integer().min(0).required(),
   host: Joi.string().min(5).required(),
   autoLoadEntities: Joi.boolean().required(),
-  logging: Joi.boolean().required(),
+  logging: Joi.array().required(),
   synchronize: Joi.boolean().required(),
   ssl: Joi.object().optional().allow(null),
 });
@@ -37,7 +37,7 @@ export const getConfig = (): DatabaseConfig => {
     username: process.env.DATABASE_USER || 'postgres',
     password: process.env.DATABASE_PASSWORD || 'password',
     synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
-    logging: process.env.DATABASE_LOGGING === 'true',
+    logging: ['query', 'schema'] as any,
     autoLoadEntities: false,
     ssl: null,
   };

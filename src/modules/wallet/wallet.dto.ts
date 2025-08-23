@@ -7,10 +7,17 @@ export class WalletResponseDto extends AbstractDto {
     description: 'Balance',
     example: 100.0,
   })
-  balance: number;
+  balance: string;
+
+  @ApiProperty({
+    description: 'Wallet Type',
+    example: ['MERCHANT', 'CUSTOMER', 'INTERNAL'],
+  })
+  type: string;
 
   constructor(entity: WalletEntity) {
     super(entity);
-    this.balance = entity.balance;
+    this.balance = (entity.balance / 100)?.toFixed(3); // Convert cents to dollars
+    this.type = entity.merchant?.id ? 'MERCHANT' : entity.customer?.id ? 'CUSTOMER' : 'INTERNAL';
   }
 }

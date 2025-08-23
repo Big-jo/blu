@@ -1,7 +1,8 @@
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
 import { AbstractEntity } from '../../core/shared/abstract.entity';
 import { CustomerResponseDto } from './customer.dto';
 import { WalletEntity } from '../wallet/wallet.entity';
+import { MerchantEntity } from '../merchant/merchant.entity';
 
 @Entity({ name: 'tbl_customers' })
 export class CustomerEntity extends AbstractEntity<CustomerResponseDto> {
@@ -11,8 +12,18 @@ export class CustomerEntity extends AbstractEntity<CustomerResponseDto> {
   @Column({ unique: true })
   email: string;
 
-  @OneToOne(() => WalletEntity, (wallet) => wallet.customer, { cascade: ['insert'] })
-  @JoinColumn()
+  @Column('uuid', {name: 'merchant_id', nullable: true})
+  merchantId: string;
+
+  @ManyToOne(() => MerchantEntity, {nullable: true})
+  @JoinColumn({ name: 'merchant_id'})
+  merchant: MerchantEntity;
+
+  @Column({type: 'uuid'})
+  walletId: string;
+
+  @OneToOne(() => WalletEntity, (wallet) => wallet.customer, {nullable: true, cascade: ['insert']})
+  @JoinColumn({ name: 'wallet_id' })
   wallet: WalletEntity;
 
   dtoClass = CustomerResponseDto;

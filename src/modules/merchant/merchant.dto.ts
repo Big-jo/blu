@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { AbstractDto } from 'src/core/shared/abstract.dto';
+import { AbstractDto } from '../../core/shared/abstract.dto';
 import { MerchantEntity } from './merchant.entity';
+import { WalletResponseDto } from '../wallet/wallet.dto';
 
 export class MerchantReponseDto extends AbstractDto {
   @ApiProperty({
@@ -21,12 +22,19 @@ export class MerchantReponseDto extends AbstractDto {
   })
   apiKey: string;
 
+  @ApiProperty({
+    description: 'Wallet',
+    type: () => WalletResponseDto,
+  })
+  wallet: WalletResponseDto;
+
   constructor(entity: MerchantEntity) {
     super(entity);
 
     this.name = entity.name;
     this.email = entity.email;
     this.apiKey = entity.apiKey;
+    this.wallet = entity.wallet?.toDto();
   }
 }
 

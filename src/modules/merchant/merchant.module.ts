@@ -8,5 +8,6 @@ import { MerchantController } from './merchant.controller';
   imports: [TypeOrmModule.forFeature([MerchantEntity])],
   providers: [MerchantService],
   controllers: [MerchantController],
+  exports: [MerchantService],
 })
 export class MerchantModule {}

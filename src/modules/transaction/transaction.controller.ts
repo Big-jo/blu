@@ -1,29 +1,35 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags, ApiSecurity } from '@nestjs/swagger'; // Import ApiSecurity
+import { Body, Controller, Get, Post, Param, Headers } from '@nestjs/common';
+import { ApiTags, ApiSecurity, ApiHeader } from '@nestjs/swagger';
 import { TransactionService } from './transaction.service';
 import {
   CreateTransactionDto,
   TransactionResponseDto,
 } from './transaction.dto';
+import { CurrentCustomer, CurrentMerchant } from '../../core/shared/decorators/current-user.decorator';
+import { MerchantEntity } from '../merchant/merchant.entity';
+import { CustomerEntity } from '../customer/customer.entity';
 
-@Controller('transactions')
+@Controller()
 @ApiTags('Transactions')
-@ApiSecurity('x-api-key') // Add ApiSecurity decorator
+@ApiSecurity('x-api-key')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
-  @Post()
+  @Post('transactions')
+  @ApiHeader({ name: 'x-idempotency-key', description: 'Idempotency key' })
+  @ApiHeader({ name: 'x-customer-id', description: 'Customer ID' })
   async create(
     @Body() createTransactionDto: CreateTransactionDto,
+    @CurrentMerchant() merchant: MerchantEntity,
+    @CurrentCustomer() customer: CustomerEntity,
+    @Headers('x-idempotency-key') nonce: string, // ideally a unique timestamp UNIX value
   ): Promise<TransactionResponseDto> {
-    const transaction =
-      await this.transactionService.create(createTransactionDto);
+    const transaction = await this.transactionService.create(
+      createTransactionDto,
+      nonce,
+      merchant,
+      customer,
+    );
     return transaction.toDto();
-  }
-
-  @Get()
-  async findAll(): Promise<TransactionResponseDto[]> {
-    const transactions = await this.transactionService.findAll();
-    return transactions.map((transaction) => transaction.toDto());
   }
 }

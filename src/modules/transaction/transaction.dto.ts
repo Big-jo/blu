@@ -1,9 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AbstractDto } from '../../core/shared/abstract.dto';
 
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { TransactionType, TransactionTypes } from '../../core/shared/types';
+import { IsEnum, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
+import { TRANSACTION_TYPES, TransactionStatus, TransactionStatuses } from '../../core/shared/types';
 import { TransactionEntity } from './transaction.entity';
+import { Transform } from 'class-transformer';
+import { PageOptionsDto } from '../pagination/page-options.dto';
 
 export class TransactionResponseDto extends AbstractDto {
   @ApiProperty({
@@ -14,47 +16,57 @@ export class TransactionResponseDto extends AbstractDto {
 
   @ApiProperty({
     description: 'Transaction Type',
-    // example: TransactionType.CREDIT,
+    example: TRANSACTION_TYPES
   })
-  type: TransactionType;
-
-  constructor(entity: TransactionEntity) {
-    super(entity);
-    this.amount = entity.amount;
-    this.type = entity.type;
-  }
-}
-
-export class CreateTransactionDto {
-  @ApiProperty({
-    description: 'Amount',
-    example: 100.0,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  amount: number;
-
-  @ApiProperty({
-    description: 'Transaction Type',
-    example: TransactionTypes,
-  })
-  // @IsEnum(TransactionType)
-  @IsNotEmpty()
-  type: TransactionType;
-
-  @ApiProperty({
-    description: 'Wallet ID',
-    example: 'uuid',
-  })
-  @IsString()
-  @IsNotEmpty()
-  walletId: string;
+  type: TRANSACTION_TYPES;
 
   @ApiProperty({
     description: 'Customer ID',
     example: 'uuid',
   })
-  @IsString()
-  @IsNotEmpty()
   customerId: string;
+
+  @ApiProperty({
+    description: 'Transaction Status',
+    example: TransactionStatuses,
+  })
+  status: TransactionStatus;
+
+  constructor(entity: TransactionEntity) {
+    super(entity);
+    this.amount = entity.amount / 100; // Convert cents to dollars
+    this.type = entity.type;
+    this.status = entity.status;
+  }
+}
+
+export class CreateTransactionDto {
+  @ApiProperty({
+    description: 'Amount in dollars',
+    example: "100.0",
+  })
+  @IsNumberString()
+  @IsNotEmpty()
+  amount: string;
+
+  type?: TRANSACTION_TYPES;
+}
+
+export class ListTransactionDto extends PageOptionsDto {
+  @ApiPropertyOptional({
+    description: 'Filter by Transaction Type',
+    enum: TRANSACTION_TYPES,
+  })
+  @IsOptional()
+  @IsEnum(TRANSACTION_TYPES, { each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
+  types?: TRANSACTION_TYPES[];
+
+  @ApiPropertyOptional({
+    description: 'Filter by Transaction Status',
+    enum: TransactionStatuses,
+  })
+  @IsOptional()
+  @IsEnum(TransactionStatuses)
+  statuses?: TransactionStatus;
 }

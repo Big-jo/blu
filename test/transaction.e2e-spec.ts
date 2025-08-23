@@ -4,7 +4,6 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { CreateCustomerDto } from 'src/modules/customer/customer.dto';
 import { CreateTransactionDto } from 'src/modules/transaction/transaction.dto';
-import { TransactionType } from 'src/modules/transaction/transaction.enum';
 
 describe('TransactionController (e2e)', () => {
   let app: INestApplication;
@@ -31,13 +30,9 @@ describe('TransactionController (e2e)', () => {
       .send(createCustomerDto)
       .expect(201);
 
-    customerId = customerRes.body.id;
-
-    const walletRes = await request(app.getHttpServer())
-      .get('/wallets')
-      .expect(200);
-
-    walletId = walletRes.body[0].id; // Assuming the first wallet belongs to the created customer
+      expect(customerRes.body).toHaveProperty('id');
+      expect(customerRes.body).toHaveProperty('wallet');
+      expect(customerRes.body.wallet.balance).toBe('0.000');
   });
 
   afterEach(async () => {
@@ -46,10 +41,7 @@ describe('TransactionController (e2e)', () => {
 
   it('/transactions (POST)', () => {
     const createTransactionDto: CreateTransactionDto = {
-      amount: 100,
-      type: TransactionType.CREDIT,
-      walletId: walletId,
-      customerId: customerId,
+      amount: "100",
     };
 
     return request(app.getHttpServer())
@@ -66,10 +58,7 @@ describe('TransactionController (e2e)', () => {
   it('/transactions (GET)', async () => {
     // Create a transaction first
     const createTransactionDto: CreateTransactionDto = {
-      amount: 50,
-      type: TransactionType.DEBIT,
-      walletId: walletId,
-      customerId: customerId,
+      amount: "50",
     };
 
     await request(app.getHttpServer())

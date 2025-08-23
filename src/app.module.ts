@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -14,6 +14,7 @@ import { CustomerModule } from './modules/customer/customer.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
 import { SecurityConfig } from './core/config/security';
+import { AuthMiddleware } from './core/shared/middlewares/auth.middleware';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SecurityConfig } from './core/config/security';
         const config = configService.get<DatabaseConfig>(
           'database',
         ) as TypeOrmModuleOptions;
+        
         return {
           ...config,
           namingStrategy: new SnakeNamingStrategy(),
@@ -34,7 +36,8 @@ import { SecurityConfig } from './core/config/security';
           // migrations: [
           //   path.resolve(__dirname, 'core/database/**/*.entity{.ts,.js}'),
           // ],
-          autoLoadEntities: false
+          // synchronize: true,
+          // migrationsRun: true
         };
       },
       inject: [ConfigService],
@@ -60,4 +63,8 @@ import { SecurityConfig } from './core/config/security';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*customers', '*transactions', '*wallets');
+  }
+}
