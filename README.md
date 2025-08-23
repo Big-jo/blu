@@ -3,6 +3,8 @@
 ## Description
 
 This project is a production-ready application that demonstrates a robust and scalable architecture for handling merchants, customers, wallets, and transactions. It is built with NestJS, a progressive Node.js framework.
+This project manages tenancy in a single database using a `merchantId` field to segregate data. Each merchant can have multiple customers, and each customer has a wallet to manage their balance. The application supports credit and debit transactions between customers and merchants.
+Ideally at scale would benefit each user having their own database schema, but for simplicity, this project uses a single database with tenant segregation.
 
 ### Features
 *   **Merchant Management:** Create and manage merchants.

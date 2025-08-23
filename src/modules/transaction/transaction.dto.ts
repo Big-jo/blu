@@ -32,11 +32,18 @@ export class TransactionResponseDto extends AbstractDto {
   })
   status: TransactionStatus;
 
+  @ApiProperty({
+    description: 'Created At',
+    example: new Date(),
+  })
+  createdAt: Date;
+
   constructor(entity: TransactionEntity) {
     super(entity);
     this.amount = entity.amount / 100; // Convert cents to dollars
     this.type = entity.type;
     this.status = entity.status;
+    this.createdAt = entity.createdAt;
   }
 }
 
