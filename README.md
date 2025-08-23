@@ -1,4 +1,4 @@
-# Blu - A Production-Ready Job Application Project
+# Blu - A Production-Ready Nestjs Project
 
 ## Description
 
