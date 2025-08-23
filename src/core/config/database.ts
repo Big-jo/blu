@@ -46,7 +46,6 @@ export const getConfig = (): DatabaseConfig => {
     config.ssl = {
       rejectUnauthorized:
         process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === 'true',
-      // ca: process.env.DATABASE_CERT,
     };
   }
 

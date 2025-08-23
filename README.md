@@ -82,16 +82,10 @@ yarn run test:e2e
 
 ### Load tests
 
-1.  Create a merchant and get the API key:
+1.  Run user story script to simulate a user story:
 
     ```bash
-    ts-node k6-scripts/create-merchant.ts
-    ```
-
-2.  Run the k6 script with the API key:
-
-    ```bash
-    k6 run -e API_KEY=<your_api_key> k6-scripts/customer-creation.js
+   k6 run k6-scripts/user-story.js
     ```
 
 ## API Reference
@@ -112,7 +106,7 @@ To build and run the Docker container, you can use the following commands:
 
 ```bash
 docker-compose build
-docker-compose up -d
+docker-compose up
 ```
 
 ## Built With

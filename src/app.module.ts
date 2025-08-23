@@ -15,10 +15,10 @@ import { WalletModule } from './modules/wallet/wallet.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
 import { CongestionModule } from './modules/congestion/congestion.module';
 import { SecurityConfig } from './core/config/security';
-import { ThrottlerGuard, ThrottlerModule } from 'nestjs-throttler';
 import { AuthMiddleware } from './core/shared/middlewares/auth.middleware';
 import { LoggerMiddleware } from './core/shared/middlewares/logger.middleware';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -47,8 +47,12 @@ import { APP_GUARD } from '@nestjs/core';
       inject: [ConfigService],
     }),
     ThrottlerModule.forRoot({
-      ttl: 60000,
-      limit: 10,
+      throttlers: [
+        {
+          limit: 100,
+          ttl: 60,
+        }
+      ]
     }),
     JwtModule.registerAsync({
       global: true,
@@ -68,13 +72,6 @@ import { APP_GUARD } from '@nestjs/core';
     WalletModule,
     TransactionModule,
     CongestionModule,
-    ThrottlerModule.forRoot({
-      limit: 100,
-      ttl: 60,
-      storage: {
-        type: 'memory',
-      },
-    }),
   ],
   controllers: [AppController],
   providers: [AppService, {
