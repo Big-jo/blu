@@ -80,14 +80,6 @@ yarn run test
 yarn run test:e2e
 ```
 
-### Load tests
-
-1.  Run user story script to simulate a user story:
-
-    ```bash
-   k6 run k6-scripts/user-story.js
-    ```
-
 ## API Reference
 
 The API is documented using Swagger. You can access the Swagger UI at `http://localhost:${PORT}/api/v1/documentation`.
