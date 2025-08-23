@@ -7,8 +7,30 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: blu-db
+    command:
+      [
+        'postgres',
+        '-c',
+        'shared_preload_libraries=auto_explain',
+        '-c',
+        'auto_explain.log_analyze=on',
+        '-c',
+        'auto_explain.log_buffers=on',
+        '-c',
+        'auto_explain.log_timing=on',
+        '-c',
+        'auto_explain.log_min_duration=100ms',
+        '-c',
+        'auto_explain.log_format=json',
+        '-c',
+        'log_statement=none',
+        '-c',
+        'log_destination=stderr',
+        '-c',
+        'logging_collector=on',
+      ]
     ports:
-      - "7432:5432"
+      - '7432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -19,14 +41,13 @@ services:
     depends_on:
       - postgres
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: sh -c "yarn migration:run && yarn run start:prod"
+    command: yarn run start:prod
 
-volumesdocker-compose up -d:
+volumes:
   postgres_data:
-

@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { ORDER } from '../../core/shared/enum';
+import { ORDER } from '../../core/shared/types';
 import { FindOptionsOrderValue } from 'typeorm';
 
 export class PageOptionsDto {

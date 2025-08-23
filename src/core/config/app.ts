@@ -29,6 +29,7 @@ export type AppConfig = {
     name: string;
     level: LogLevel;
   };
+  initialMerchantBalance: number;
 };
 
 const schema = Joi.object({
@@ -49,6 +50,7 @@ const schema = Joi.object({
       .valid(...logLevels)
       .required(),
   }),
+  initialMerchantBalance: Joi.number().required(),
 });
 
 export const getConfig = (): AppConfig => {
@@ -71,6 +73,7 @@ export const getConfig = (): AppConfig => {
     swagger: {
       enabled: process.env.SWAGGER_ENABLED === 'true',
     },
+    initialMerchantBalance: Number(process.env.INITIAL_MERCHANT_BALANCE) || 10000000,
   };
 };
 

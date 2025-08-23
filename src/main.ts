@@ -1,5 +1,5 @@
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
@@ -18,9 +18,12 @@ import {
 
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { ThrottlerGuard } from 'nestjs-throttler';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: ['error', 'warn', 'log'],
+});
 
   const configService = app.get(ConfigService);
   const { server, swagger, environment } = configService.get<AppConfig>('app');
@@ -28,6 +31,7 @@ async function bootstrap() {
   const whitelist = [
     // Add whitelists here
   ];
+
   // Enable localhost on dev/staging servers only
   if (environment === 'development') {
     whitelist.push(/http(s)?:\/\/localhost:/);
@@ -65,7 +69,7 @@ async function bootstrap() {
   app.useBodyParser('json', { limit: '50mb' });
   console.log(swagger.enabled);
 
-  if (swagger.enabled) {
+  if (swagger.enabled && environment !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .addBearerAuth()
       .addApiKey(
@@ -93,6 +97,6 @@ async function bootstrap() {
   }
   await app.listen(server.port);
 
-  console.log(`Server running on port: ${server.port}`);
+  Logger.log(`Server running on port: ${server.port}`);
 }
 void bootstrap();

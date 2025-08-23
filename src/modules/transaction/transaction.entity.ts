@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { AbstractEntity } from '../../core/shared/abstract.entity';
 import { TransactionResponseDto } from './transaction.dto';
 import { WalletEntity } from '../wallet/wallet.entity';
@@ -17,7 +17,7 @@ export class TransactionEntity extends AbstractEntity<TransactionResponseDto> {
   @Column('uuid')
   walletId: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true, nullable: true})
   nonce: string;
 
   @Column({ default: 'FAILED' satisfies TransactionStatus })

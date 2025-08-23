@@ -11,20 +11,22 @@ import { CreateTransactionDto, ListTransactionDto } from './transaction.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerService } from '../customer/customer.service';
 import { WalletService } from '../wallet/wallet.service';
-import {  TRANSACTION_TYPES, TransactionStatus, TransactionStatuses } from '../../core/shared/types';
+import { TRANSACTION_TYPES, TransactionStatus, TransactionStatuses } from '../../core/shared/types';
 import { WalletEntity } from '../wallet/wallet.entity';
 import { CustomerEntity } from '../customer/customer.entity';
 import { MerchantEntity } from '../merchant/merchant.entity';
-import { duplicateErrorHandler } from '../../core/shared/util/duplicate-error-handler.util';
 import { PageDto } from '../pagination/page.dto';
+import { Logger } from '@nestjs/common';
+import { duplicateErrorHandler } from '../../core/shared/util/duplicate-error-handler.util';
 
 @Injectable()
 export class TransactionService {
+  private readonly logger = new Logger(TransactionService.name);
   constructor(
     @InjectRepository(TransactionEntity)
     private readonly transactionRepository: Repository<TransactionEntity>,
     private readonly walletService: WalletService,
-  ) {}
+  ) { }
 
   async create(
     dto: CreateTransactionDto,
@@ -33,7 +35,7 @@ export class TransactionService {
     customer: CustomerEntity,
   ): Promise<TransactionEntity> {
     const existingTransaction = await this.transactionRepository.findOne({
-      where: { nonce, createdAt: LessThan(new Date(Date.now() + 5 * 60 * 1000)) }, // 5 minutes window
+      where: { nonce},
     });
 
     if (existingTransaction) {
@@ -45,11 +47,11 @@ export class TransactionService {
     const type = amount >= 0 ? TRANSACTION_TYPES.CREDIT : TRANSACTION_TYPES.DEBIT;
 
     return this.transactionRepository.manager.transaction(
-      'SERIALIZABLE',
+      'REPEATABLE READ',
       async (trx) => {
         const [customerWallet, merchantWallet] = await Promise.all([
-          this.walletService.findById(customer.wallet.id),
-          this.walletService.findById(merchant.wallet.id),
+          trx.findOne(WalletEntity, { where: { id: customer.wallet.id }, lock: { mode: 'pessimistic_write' } }),
+          trx.findOne(WalletEntity, { where: { id: merchant.wallet.id }, lock: { mode: 'pessimistic_write' } }),
         ]);
 
         if (type === TRANSACTION_TYPES.DEBIT && customerWallet.balance < absAmount) {
@@ -87,14 +89,18 @@ export class TransactionService {
           ...dto,
           amount: -amount, // Reverse amount for merchant
           walletId: merchantWallet.id,
-          nonce,
           type: type === TRANSACTION_TYPES.DEBIT ? TRANSACTION_TYPES.CREDIT : TRANSACTION_TYPES.DEBIT,
           status: 'SUCCESS',
         });
 
-        return trx.save(customerTrx);
-      },
-    );
+        try {
+          await trx.save([customerTrx, merchantTrx]);
+          return customerTrx;
+        } catch (error) {
+          this.logger.error('Error creating transaction:', error);
+          duplicateErrorHandler(error);
+        }
+      })
   }
 
   async findAll(
@@ -102,7 +108,7 @@ export class TransactionService {
     merchantId: string,
     dto: ListTransactionDto,
   ) {
-    const [ result, count ] = await this.transactionRepository.findAndCount({
+    const [result, count] = await this.transactionRepository.findAndCount({
       where: { wallet: { customer: { id: customerId, merchant: { id: merchantId } } } },
       relations: { wallet: { customer: true, merchant: true } },
       order: { createdAt: 'DESC' },

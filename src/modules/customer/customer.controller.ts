@@ -4,7 +4,7 @@ import { CustomerService } from './customer.service';
 import { CreateCustomerDto, CustomerResponseDto } from './customer.dto';
 import { MerchantEntity } from '../merchant/merchant.entity';
 import { CurrentMerchant } from '../../core/shared/decorators/current-user.decorator';
-import { ListTransactionDto, TransactionResponseDto } from '../transaction/transaction.dto';
+import { ListTransactionDto } from '../transaction/transaction.dto';
 import { PageOptionsDto } from '../pagination/page-options.dto';
 import { TransactionService } from '../transaction/transaction.service';
 

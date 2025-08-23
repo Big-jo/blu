@@ -17,7 +17,6 @@ export const options = {
 
 export default function () {
   // Create a customer and get their wallet ID for each iteration
-  // In a real-world scenario, you might want to pre-create these or use a shared pool
   const uniqueCustomerEmail = `transaction-customer-${__VU}-${__ITER}@example.com`;
   const createCustomerPayload = JSON.stringify({
     name: 'Transaction User',
@@ -34,11 +33,6 @@ export default function () {
   check(customerRes, { 'customer created': (r) => r.status === 201 });
 
   const customerId = customerRes.json('id');
-
-  // Assuming the first wallet belongs to the created customer
-  const walletRes = http.get('http://localhost:3000/wallets');
-  check(walletRes, { 'wallets fetched': (r) => r.status === 200 });
-  const walletId = walletRes.json('[0].id');
 
   const transactionPayload = JSON.stringify({
     amount: Math.random() * 100, // Random amount

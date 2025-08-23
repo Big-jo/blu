@@ -13,8 +13,12 @@ import { MerchantModule } from './modules/merchant/merchant.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
+import { CongestionModule } from './modules/congestion/congestion.module';
 import { SecurityConfig } from './core/config/security';
+import { ThrottlerGuard, ThrottlerModule } from 'nestjs-throttler';
 import { AuthMiddleware } from './core/shared/middlewares/auth.middleware';
+import { LoggerMiddleware } from './core/shared/middlewares/logger.middleware';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -28,7 +32,7 @@ import { AuthMiddleware } from './core/shared/middlewares/auth.middleware';
         const config = configService.get<DatabaseConfig>(
           'database',
         ) as TypeOrmModuleOptions;
-        
+
         return {
           ...config,
           namingStrategy: new SnakeNamingStrategy(),
@@ -41,6 +45,10 @@ import { AuthMiddleware } from './core/shared/middlewares/auth.middleware';
         };
       },
       inject: [ConfigService],
+    }),
+    ThrottlerModule.forRoot({
+      ttl: 60000,
+      limit: 10,
     }),
     JwtModule.registerAsync({
       global: true,
@@ -59,12 +67,24 @@ import { AuthMiddleware } from './core/shared/middlewares/auth.middleware';
     CustomerModule,
     WalletModule,
     TransactionModule,
+    CongestionModule,
+    ThrottlerModule.forRoot({
+      limit: 100,
+      ttl: 60,
+      storage: {
+        type: 'memory',
+      },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard,
+  },],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes('*customers', '*transactions', '*wallets');
+    consumer.apply(LoggerMiddleware).forRoutes('*path');
   }
 }

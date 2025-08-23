@@ -45,16 +45,7 @@ describe('E2E Tests', () => {
   afterAll(async () => {
     await app.close();
   });
-
-  describe('AppController (e2e)', () => {
-    it('/ (GET)', () => {
-      return request(app.getHttpServer())
-        .get('/')
-        .expect(200)
-        .expect('Hello World!');
-    });
-  });
-
+  
   describe('MerchantController (e2e)', () => {
     it('/merchants (POST)', () => {
       const uniqueEmail = `test-${Date.now()}@merchant.com`;
@@ -150,7 +141,7 @@ describe('E2E Tests', () => {
         .post('/transactions')
         .set('x-api-key', apiKey)
         .set('x-customer-id', customer.id)
-        .set('x-idempotency-key', Date.now().toString())
+        .set('x-idempotency-key', Date.now().toString()+1)
         .send(createTransactionDto)
         .expect(201);
 

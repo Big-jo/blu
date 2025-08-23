@@ -123,3 +123,13 @@ docker-compose up -d
 *   [Jest](https://jestjs.io/) - The testing framework used.
 *   [k6](https://k6.io/) - The load testing tool used.
 *   [Docker](https://www.docker.com/) - The containerization platform used.
+
+## Benchmarking
+
+To run the k6 benchmark tests, you can use the following command:
+
+```bash
+k6 run k6-scripts/user-story.js
+```
+
+This will simulate a user story that includes merchant creation, customer creation, and transactions. You can adjust the number of virtual users (VUs) and the duration of the test in the `k6-scripts/user-story.js` file.

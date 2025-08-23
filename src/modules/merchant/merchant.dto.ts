@@ -3,6 +3,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { AbstractDto } from '../../core/shared/abstract.dto';
 import { MerchantEntity } from './merchant.entity';
 import { WalletResponseDto } from '../wallet/wallet.dto';
+import { Transform } from 'class-transformer';
 
 export class MerchantReponseDto extends AbstractDto {
   @ApiProperty({
@@ -52,6 +53,7 @@ export class CreateMerchantDto {
     example: 'janedoe@gmail.com',
   })
   @IsEmail()
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsNotEmpty()
   email: string;
 }

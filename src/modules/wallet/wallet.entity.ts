@@ -13,13 +13,13 @@ export class WalletEntity extends AbstractEntity<WalletResponseDto> {
 
   @OneToOne(() => CustomerEntity, (customer) => customer.wallet, {
     cascade: ['insert', 'update'],
-    eager: true,
+    // eager: true,
   })
   customer: CustomerEntity;
 
   @OneToOne(() => MerchantEntity, (merchant) => merchant.wallet, {
     cascade: ['insert', 'update'],
-    eager: true,
+    // eager: true,
   })
   merchant: MerchantEntity;
 

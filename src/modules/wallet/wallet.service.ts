@@ -15,11 +15,6 @@ export class WalletService {
     return this.walletRepository.find();
   }
 
-  async create(customerId: string): Promise<WalletEntity> {
-    const wallet = this.walletRepository.create();
-    return this.walletRepository.save(wallet);
-  }
-
   async findById(id: string): Promise<WalletEntity> {
     const wallet = await this.walletRepository.findOne({ where: { id } });
 

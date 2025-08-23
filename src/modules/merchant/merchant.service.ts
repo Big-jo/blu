@@ -1,27 +1,32 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MerchantEntity } from './merchant.entity';
 import { CreateMerchantDto } from './merchant.dto';
 import { randomBytes } from 'crypto';
-import { duplicateErrorHandler } from '../../core/shared/util/duplicate-error-handler.util';
 import { WalletEntity } from '../wallet/wallet.entity';
 import { v4 as uuid } from 'uuid';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from 'src/core/config/app';
+
 @Injectable()
 export class MerchantService {
+  private readonly logger = new Logger(MerchantService.name);
   constructor(
     @InjectRepository(MerchantEntity)
     private readonly merchantRepository: Repository<MerchantEntity>,
+    private readonly configService: ConfigService,
   ) { }
 
   async create(createMerchantDto: CreateMerchantDto): Promise<MerchantEntity> {
     const apiKey = `blu_${randomBytes(16).toString('hex')}`;
 
     let merchant = await this.merchantRepository.manager.transaction(
-      'SERIALIZABLE',
+      'REPEATABLE READ',
       async (trx) => {
         const merchantId = uuid();
-        const wallet = trx.create(WalletEntity, { balance: 10_000_000 }); // Initial balance of $100,000
+        const initialBalance = this.configService.get<AppConfig>('app').initialMerchantBalance;
+    const wallet = trx.create(WalletEntity, { balance: initialBalance });
         const merchant = trx.create(MerchantEntity, {
           id: merchantId,
           ...createMerchantDto,
@@ -34,8 +39,7 @@ export class MerchantService {
           return savedMerchant;
         }
         catch (error) {
-          console.error('Error creating merchant:', error);
-          duplicateErrorHandler(error);
+          this.logger.error('Error creating merchant:', error);
           throw new InternalServerErrorException('Failed to create merchant');
         }
       },

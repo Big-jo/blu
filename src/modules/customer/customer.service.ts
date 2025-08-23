@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { CreateCustomerDto } from './customer.dto';
@@ -12,6 +12,7 @@ import { duplicateErrorHandler } from '../../core/shared/util/duplicate-error-ha
 
 @Injectable()
 export class CustomerService {
+  private readonly logger = new Logger(CustomerService.name);
   constructor(
     @InjectRepository(CustomerEntity)
     private readonly customerRepository: Repository<CustomerEntity>,
@@ -23,7 +24,7 @@ export class CustomerService {
     merchantId: string,
   ): Promise<CustomerEntity> {
     let customer = await this.customerRepository.manager.transaction(
-      'SERIALIZABLE',
+      'REPEATABLE READ',
       async (trx) => {
         const customerId = uuidv4();
         const wallet = trx.create(WalletEntity);
@@ -33,9 +34,8 @@ export class CustomerService {
            await trx.save(customer);
            return customer;
         } catch (error) {
-          console.error('Error creating customer:', error);
+          this.logger.error('Error creating customer:', error);
           duplicateErrorHandler(error);
-          throw new InternalServerErrorException('Failed to create customer');
         }
       },
     );

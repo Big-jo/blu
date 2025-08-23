@@ -5,3 +5,8 @@ export enum TRANSACTION_TYPES {
   DEBIT = 'DEBIT',
   CREDIT = 'CREDIT',
 }
+
+export enum ORDER {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
