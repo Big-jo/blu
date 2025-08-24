@@ -51,8 +51,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         {
           limit: 100,
           ttl: 60,
-        }
-      ]
+        },
+      ],
     }),
     JwtModule.registerAsync({
       global: true,
@@ -74,14 +74,19 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     CongestionModule,
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  },],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('*customers', '*transactions', '*wallets');
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes('*customers', '*transactions', '*wallets');
     consumer.apply(LoggerMiddleware).forRoutes('*path');
   }
 }

@@ -1,7 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiTags, ApiSecurity } from '@nestjs/swagger'; // Import ApiSecurity
 import { WalletService } from './wallet.service';
-import { WalletResponseDto } from './wallet.dto';
 
 @Controller('wallets')
 @ApiTags('Wallets')

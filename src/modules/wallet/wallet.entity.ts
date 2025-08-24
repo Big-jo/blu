@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToOne, OneToMany, AfterLoad, Check } from 'typeorm';
+import { Entity, Column, OneToOne, OneToMany, AfterLoad, Check } from 'typeorm';
 import { AbstractEntity } from '../../core/shared/abstract.entity';
 import { WalletResponseDto } from './wallet.dto';
 import { CustomerEntity } from '../customer/customer.entity';
@@ -6,7 +6,7 @@ import { TransactionEntity } from '../transaction/transaction.entity';
 import { MerchantEntity } from '../merchant/merchant.entity';
 
 @Entity({ name: 'tbl_wallets' })
-@Check("balance >= 0")
+@Check('balance >= 0')
 export class WalletEntity extends AbstractEntity<WalletResponseDto> {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
   balance: number;
@@ -23,7 +23,7 @@ export class WalletEntity extends AbstractEntity<WalletResponseDto> {
   })
   merchant: MerchantEntity;
 
-  @OneToMany(()=> TransactionEntity, (transaction)=>transaction.wallet)
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.wallet)
   transactions: TransactionEntity[];
 
   dtoClass = WalletResponseDto;
@@ -33,5 +33,3 @@ export class WalletEntity extends AbstractEntity<WalletResponseDto> {
     this.balance = parseFloat(this.balance as any);
   }
 }
-
-

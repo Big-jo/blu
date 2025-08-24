@@ -1,8 +1,6 @@
 import { LogLevel } from '@nestjs/common';
-import { readFileSync } from 'fs';
 import { registerAs } from '@nestjs/config';
 import * as Joi from 'joi';
-import * as path from 'path';
 
 const environments = ['production', 'development', 'staging', 'test'] as const;
 const logLevels: readonly LogLevel[] = [
@@ -73,7 +71,8 @@ export const getConfig = (): AppConfig => {
     swagger: {
       enabled: process.env.SWAGGER_ENABLED === 'true',
     },
-    initialMerchantBalance: Number(process.env.INITIAL_MERCHANT_BALANCE) || 10000000,
+    initialMerchantBalance:
+      Number(process.env.INITIAL_MERCHANT_BALANCE) || 10000000,
   };
 };
 

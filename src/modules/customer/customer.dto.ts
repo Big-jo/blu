@@ -19,7 +19,7 @@ export class CustomerResponseDto extends AbstractDto {
 
   @ApiProperty({
     description: 'Balance',
-    type: WalletResponseDto
+    type: WalletResponseDto,
   })
   wallet: WalletResponseDto;
 

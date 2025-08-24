@@ -1,4 +1,3 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -45,7 +44,7 @@ describe('E2E Tests', () => {
   afterAll(async () => {
     await app.close();
   });
-  
+
   describe('MerchantController (e2e)', () => {
     it('/merchants (POST)', () => {
       const uniqueEmail = `test-${Date.now()}@merchant.com`;
@@ -53,7 +52,7 @@ describe('E2E Tests', () => {
         name: 'Test Merchant',
         email: uniqueEmail,
       };
-  
+
       return request(app.getHttpServer())
         .post('/merchants')
         .send(createMerchantDto)
@@ -146,7 +145,7 @@ describe('E2E Tests', () => {
         .expect(201);
 
       expect(response.body).toHaveProperty('id');
-      expect(response.body.amount).toEqual("10.000");
+      expect(response.body.amount).toEqual('10.000');
       expect(response.body.type).toEqual('CREDIT');
     });
 

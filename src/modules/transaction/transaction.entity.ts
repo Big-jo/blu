@@ -1,10 +1,8 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { AbstractEntity } from '../../core/shared/abstract.entity';
 import { TransactionResponseDto } from './transaction.dto';
 import { WalletEntity } from '../wallet/wallet.entity';
-import { CustomerEntity } from '../customer/customer.entity';
 import { TRANSACTION_TYPES, TransactionStatus } from '../../core/shared/types';
-import { MerchantEntity } from '../merchant/merchant.entity';
 
 @Entity({ name: 'tbl_transactions' })
 export class TransactionEntity extends AbstractEntity<TransactionResponseDto> {
@@ -17,8 +15,11 @@ export class TransactionEntity extends AbstractEntity<TransactionResponseDto> {
   @Column('uuid')
   walletId: string;
 
-  @Column({ unique: true, nullable: true})
+  @Column({ unique: true, nullable: true })
   nonce: string;
+
+  @Column({ unique: true, nullable: true })
+  requestHash: string;
 
   @Column({ default: 'PENDING' satisfies TransactionStatus })
   status: TransactionStatus;

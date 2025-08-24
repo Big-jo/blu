@@ -1,23 +1,31 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AbstractDto } from '../../core/shared/abstract.dto';
 
-import { IsEnum, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
-import { TRANSACTION_TYPES, TransactionStatus, TransactionStatuses } from '../../core/shared/types';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+} from 'class-validator';
+import {
+  TRANSACTION_TYPES,
+  TransactionStatus,
+  TransactionStatuses,
+} from '../../core/shared/types';
 import { TransactionEntity } from './transaction.entity';
 import { Transform } from 'class-transformer';
 import { PageOptionsDto } from '../pagination/page-options.dto';
-import { WalletResponseDto } from '../wallet/wallet.dto';
 
 export class TransactionResponseDto extends AbstractDto {
   @ApiProperty({
     description: 'Amount',
-    example: "100.000",
+    example: '100.000',
   })
   amount: string;
 
   @ApiProperty({
     description: 'Transaction Type',
-    example: TRANSACTION_TYPES
+    example: TRANSACTION_TYPES,
   })
   type: TRANSACTION_TYPES;
 
@@ -38,7 +46,7 @@ export class TransactionResponseDto extends AbstractDto {
     example: new Date(),
   })
   createdAt: Date;
-  
+
   constructor(entity: TransactionEntity) {
     super(entity);
     this.amount = (entity.amount / 100).toFixed(3); // Convert cents to dollars
@@ -52,7 +60,7 @@ export class TransactionResponseDto extends AbstractDto {
 export class CreateTransactionDto {
   @ApiProperty({
     description: 'Amount in dollars',
-    example: "100.0",
+    example: '100.0',
   })
   @IsNumberString()
   @IsNotEmpty()

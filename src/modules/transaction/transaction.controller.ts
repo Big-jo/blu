@@ -1,13 +1,17 @@
-import { Body, Controller, Get, Post, Param, Headers } from '@nestjs/common';
+import { Body, Controller, Post, Headers, Req } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiHeader } from '@nestjs/swagger';
 import { TransactionService } from './transaction.service';
 import {
   CreateTransactionDto,
   TransactionResponseDto,
 } from './transaction.dto';
-import { CurrentCustomer, CurrentMerchant } from '../../core/shared/decorators/current-user.decorator';
+import {
+  CurrentCustomer,
+  CurrentMerchant,
+} from '../../core/shared/decorators/current-user.decorator';
 import { MerchantEntity } from '../merchant/merchant.entity';
 import { CustomerEntity } from '../customer/customer.entity';
+import { Request } from 'express';
 
 @Controller()
 @ApiTags('Transactions')
@@ -23,10 +27,13 @@ export class TransactionController {
     @CurrentMerchant() merchant: MerchantEntity,
     @CurrentCustomer() customer: CustomerEntity,
     @Headers('x-idempotency-key') nonce: string, // ideally a unique timestamp UNIX value
+    @Req() req: Request,
   ): Promise<TransactionResponseDto> {
+    const requestHash = req['requestHash'];
     const transaction = await this.transactionService.create(
       createTransactionDto,
       nonce,
+      requestHash,
       merchant,
       customer,
     );

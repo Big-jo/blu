@@ -7,7 +7,6 @@ export const CurrentMerchant = createParamDecorator(
   },
 );
 
-
 export const CurrentCustomer = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const { customer } = ctx.switchToHttp().getRequest();

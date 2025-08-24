@@ -1,4 +1,8 @@
-import { PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { AbstractDto, AbstractIdentityDto } from './abstract.dto';
 
 export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {

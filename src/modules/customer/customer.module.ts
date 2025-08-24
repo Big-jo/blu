@@ -7,7 +7,11 @@ import { CustomerEntity } from './customer.entity';
 import { TransactionModule } from '../transaction/transaction.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CustomerEntity]), WalletModule, TransactionModule],
+  imports: [
+    TypeOrmModule.forFeature([CustomerEntity]),
+    WalletModule,
+    TransactionModule,
+  ],
   providers: [CustomerService],
   controllers: [CustomerController],
   exports: [CustomerService],

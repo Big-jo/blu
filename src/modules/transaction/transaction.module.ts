@@ -1,11 +1,16 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionEntity } from './transaction.entity';
 import { TransactionService } from './transaction.service';
 import { TransactionController } from './transaction.controller';
-import { CustomerModule } from '../customer/customer.module';
 import { WalletModule } from '../wallet/wallet.module';
 import { WalletEntity } from '../wallet/wallet.entity';
+import { TransactionValidationMiddleware } from './transaction-validation.middleware';
 
 @Module({
   imports: [
@@ -16,4 +21,10 @@ import { WalletEntity } from '../wallet/wallet.entity';
   exports: [TransactionService],
   controllers: [TransactionController],
 })
-export class TransactionModule {}
+export class TransactionModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TransactionValidationMiddleware)
+      .forRoutes({ path: 'transactions', method: RequestMethod.POST });
+  }
+}

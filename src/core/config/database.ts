@@ -37,7 +37,7 @@ export const getConfig = (): DatabaseConfig => {
     username: process.env.DATABASE_USER || 'postgres',
     password: process.env.DATABASE_PASSWORD,
     synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
-   logging: process.env.DATABASE_LOGGING === 'true',
+    logging: process.env.DATABASE_LOGGING === 'true',
     autoLoadEntities: false,
     ssl: null,
   };

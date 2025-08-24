@@ -2,7 +2,6 @@ import { AbstractEntity } from '../../core/shared/abstract.entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { MerchantReponseDto } from './merchant.dto';
 import { WalletEntity } from '../wallet/wallet.entity';
-import Joi from 'joi';
 
 @Entity({ name: 'tbl_merchants' })
 export class MerchantEntity extends AbstractEntity<MerchantReponseDto> {

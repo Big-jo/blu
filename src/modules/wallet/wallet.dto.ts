@@ -18,6 +18,10 @@ export class WalletResponseDto extends AbstractDto {
   constructor(entity: WalletEntity) {
     super(entity);
     this.balance = (entity.balance / 100)?.toFixed(3); // Convert cents to dollars
-    this.type = entity.merchant?.id ? 'MERCHANT' : entity.customer?.id ? 'CUSTOMER' : 'INTERNAL';
+    this.type = entity.merchant?.id
+      ? 'MERCHANT'
+      : entity.customer?.id
+        ? 'CUSTOMER'
+        : 'INTERNAL';
   }
 }

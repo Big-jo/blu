@@ -12,17 +12,20 @@ export class CustomerEntity extends AbstractEntity<CustomerResponseDto> {
   @Column({ unique: true })
   email: string;
 
-  @Column('uuid', {name: 'merchant_id', nullable: true})
+  @Column('uuid', { name: 'merchant_id', nullable: true })
   merchantId: string;
 
-  @ManyToOne(() => MerchantEntity, {nullable: true})
-  @JoinColumn({ name: 'merchant_id'})
+  @ManyToOne(() => MerchantEntity, { nullable: true })
+  @JoinColumn({ name: 'merchant_id' })
   merchant: MerchantEntity;
 
-  @Column({type: 'uuid'})
+  @Column({ type: 'uuid' })
   walletId: string;
 
-  @OneToOne(() => WalletEntity, (wallet) => wallet.customer, {nullable: true, cascade: ['insert']})
+  @OneToOne(() => WalletEntity, (wallet) => wallet.customer, {
+    nullable: true,
+    cascade: ['insert'],
+  })
   @JoinColumn({ name: 'wallet_id' })
   wallet: WalletEntity;
 

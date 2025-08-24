@@ -1,7 +1,7 @@
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import {
   DocumentBuilder,
   SwaggerCustomOptions,
@@ -10,19 +10,14 @@ import {
 import helmet from 'helmet';
 import { AppConfig } from './core/config/app';
 import { TrimWhitespacePipe } from './core/shared/pipes/trim-whitespace.pipe';
-import {
-  SWAGGER_VERSION,
-  SWAGGER_TITLE,
-  SWAGGER_RELATIVE_URL,
-} from './core/shared/constants/index';
+import { SWAGGER_RELATIVE_URL } from './core/shared/constants/index';
 
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log'],
-});
+  });
 
   const configService = app.get(ConfigService);
   const { server, swagger, environment } = configService.get<AppConfig>('app');

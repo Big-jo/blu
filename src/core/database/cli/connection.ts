@@ -15,4 +15,3 @@ const datasource = new DataSource({
 } as PostgresConnectionOptions);
 
 export default datasource;
- 

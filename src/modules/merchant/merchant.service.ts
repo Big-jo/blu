@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MerchantEntity } from './merchant.entity';
@@ -17,7 +23,7 @@ export class MerchantService {
     @InjectRepository(MerchantEntity)
     private readonly merchantRepository: Repository<MerchantEntity>,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async create(createMerchantDto: CreateMerchantDto): Promise<MerchantEntity> {
     const apiKey = `blu_${randomBytes(16).toString('hex')}`;
@@ -26,7 +32,8 @@ export class MerchantService {
       'REPEATABLE READ',
       async (trx) => {
         const merchantId = uuid();
-        const initialBalance = this.configService.get<AppConfig>('app').initialMerchantBalance;
+        const initialBalance =
+          this.configService.get<AppConfig>('app').initialMerchantBalance;
         const wallet = trx.create(WalletEntity, { balance: initialBalance });
         const merchant = trx.create(MerchantEntity, {
           id: merchantId,
@@ -38,10 +45,9 @@ export class MerchantService {
         try {
           const savedMerchant = await trx.save(merchant);
           return savedMerchant;
-        }
-        catch (error) {
+        } catch (error) {
           this.logger.error('Error creating merchant:', error);
-          duplicateErrorHandler(error)
+          duplicateErrorHandler(error);
           throw new InternalServerErrorException('Failed to create merchant');
         }
       },
@@ -51,7 +57,10 @@ export class MerchantService {
   }
 
   async findByApiKey(apiKey: string): Promise<MerchantEntity> {
-    const merchant = await this.merchantRepository.findOne({ where: { apiKey }, relations: { wallet: true } });
+    const merchant = await this.merchantRepository.findOne({
+      where: { apiKey },
+      relations: { wallet: true },
+    });
 
     if (!merchant) {
       throw new UnauthorizedException('Invalid API key');
@@ -64,8 +73,8 @@ export class MerchantService {
     const merchant = await this.merchantRepository.findOne({
       where: { id },
       relations: {
-        wallet: true
-      }
+        wallet: true,
+      },
     });
 
     if (!merchant) {

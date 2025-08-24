@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { CreateCustomerDto } from './customer.dto';
@@ -28,11 +28,16 @@ export class CustomerService {
       async (trx) => {
         const customerId = uuidv4();
         const wallet = trx.create(WalletEntity);
-        const customer = trx.create(CustomerEntity, { id: customerId, ...dto, merchantId, wallet });
+        const customer = trx.create(CustomerEntity, {
+          id: customerId,
+          ...dto,
+          merchantId,
+          wallet,
+        });
 
         try {
-           await trx.save(customer);
-           return customer;
+          await trx.save(customer);
+          return customer;
         } catch (error) {
           this.logger.error('Error creating customer:', error);
           duplicateErrorHandler(error);
@@ -41,15 +46,14 @@ export class CustomerService {
     );
 
     return this.findOne(customer.id, merchantId);
-
   }
 
   async findOne(id: string, merchantId: string): Promise<CustomerEntity> {
     const customer = await this.customerRepository.findOne({
       where: { id, merchantId },
-      relations:  {
-        wallet: { customer: true}
-      }
+      relations: {
+        wallet: { customer: true },
+      },
     });
 
     if (!customer) {

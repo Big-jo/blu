@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Param,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto, CustomerResponseDto } from './customer.dto';
@@ -12,8 +20,9 @@ import { TransactionService } from '../transaction/transaction.service';
 @ApiTags('Customers')
 @ApiSecurity('x-api-key')
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService,
-  private readonly transactionService: TransactionService
+  constructor(
+    private readonly customerService: CustomerService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   @Post()
