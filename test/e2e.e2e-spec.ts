@@ -54,7 +54,7 @@ describe('E2E Tests', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/merchants')
+        .post('/api/v1/merchants')
         .send(createMerchantDto)
         .expect(201)
         .then((res) => {

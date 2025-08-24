@@ -11,7 +11,7 @@ export class AuthMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request & { user: any }, res: Response, next: NextFunction) {
-    if (req.baseUrl === '/merchants' && req.method === 'POST') {
+    if (req.baseUrl === '/api/v1/merchants' && req.method === 'POST') {
       return next();
     }
 

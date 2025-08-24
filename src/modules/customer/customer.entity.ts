@@ -1,10 +1,18 @@
-import { Entity, Column, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToOne,
+  JoinColumn,
+  ManyToOne,
+  Unique,
+} from 'typeorm';
 import { AbstractEntity } from '../../core/shared/abstract.entity';
 import { CustomerResponseDto } from './customer.dto';
 import { WalletEntity } from '../wallet/wallet.entity';
 import { MerchantEntity } from '../merchant/merchant.entity';
 
 @Entity({ name: 'tbl_customers' })
+@Unique(['email', 'merchantId'])
 export class CustomerEntity extends AbstractEntity<CustomerResponseDto> {
   @Column()
   name: string;
