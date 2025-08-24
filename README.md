@@ -90,7 +90,7 @@ The API is documented using Swagger. You can access the Swagger UI at `http://lo
 
 Most of the endpoints are protected by an API key. You need to provide the API key in the `x-api-key` header of your requests.
 
-When performing operations on behalf of a customer, you also need to provide the customer ID in the `x-customer-id` header.
+When performing operations on a customer, you also need to provide the customer ID in the `x-customer-id` header.
 
 ## Deployment
 
