@@ -50,7 +50,7 @@ Ideally at scale would benefit each user having their own database schema, but f
     Ideally, it would be done automatically on application startup, but to run it manually, use:
 
     ```bash
-    yarn migration:run
+    yarn run migration:run
     ```
 
 ## Running the application
