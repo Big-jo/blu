@@ -41,6 +41,7 @@ export class CustomerService {
     );
 
     return this.findOne(customer.id, merchantId);
+
   }
 
   async findOne(id: string, merchantId: string): Promise<CustomerEntity> {

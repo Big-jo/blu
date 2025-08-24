@@ -141,12 +141,12 @@ describe('E2E Tests', () => {
         .post('/transactions')
         .set('x-api-key', apiKey)
         .set('x-customer-id', customer.id)
-        .set('x-idempotency-key', Date.now().toString()+1)
+        .set('x-idempotency-key', Date.now().toString())
         .send(createTransactionDto)
         .expect(201);
 
       expect(response.body).toHaveProperty('id');
-      expect(response.body.amount).toEqual(10.0);
+      expect(response.body.amount).toEqual("10.000");
       expect(response.body.type).toEqual('CREDIT');
     });
 

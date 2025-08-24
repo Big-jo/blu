@@ -8,6 +8,7 @@ import { WalletEntity } from '../wallet/wallet.entity';
 import { v4 as uuid } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from 'src/core/config/app';
+import { duplicateErrorHandler } from '../../core/shared/util/duplicate-error-handler.util';
 
 @Injectable()
 export class MerchantService {
@@ -26,7 +27,7 @@ export class MerchantService {
       async (trx) => {
         const merchantId = uuid();
         const initialBalance = this.configService.get<AppConfig>('app').initialMerchantBalance;
-    const wallet = trx.create(WalletEntity, { balance: initialBalance });
+        const wallet = trx.create(WalletEntity, { balance: initialBalance });
         const merchant = trx.create(MerchantEntity, {
           id: merchantId,
           ...createMerchantDto,
@@ -40,6 +41,7 @@ export class MerchantService {
         }
         catch (error) {
           this.logger.error('Error creating merchant:', error);
+          duplicateErrorHandler(error)
           throw new InternalServerErrorException('Failed to create merchant');
         }
       },

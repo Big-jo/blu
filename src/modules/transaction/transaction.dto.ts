@@ -44,7 +44,7 @@ export class TransactionResponseDto extends AbstractDto {
     this.amount = (entity.amount / 100).toFixed(3); // Convert cents to dollars
     this.type = entity.type;
     this.status = entity.status;
-    this.customerId = entity.wallet.customer?.id;
+    this.customerId = entity.wallet?.customer?.id;
     this.createdAt = entity.createdAt;
   }
 }
