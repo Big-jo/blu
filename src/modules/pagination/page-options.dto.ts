@@ -32,12 +32,6 @@ export class PageOptionsDto {
   @IsOptional()
   readonly pageSize?: number = 20;
 
-  //TODO: Make a decision on whether to use this or not
-  // @ApiPropertyOptional()
-  // @Type(() => String)
-  // @IsOptional()
-  // readonly filter?: string;
-
   get skip(): number {
     return (this.page - 1) * this.pageSize;
   }

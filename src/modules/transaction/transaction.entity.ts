@@ -20,7 +20,7 @@ export class TransactionEntity extends AbstractEntity<TransactionResponseDto> {
   @Column({ unique: true, nullable: true})
   nonce: string;
 
-  @Column({ default: 'FAILED' satisfies TransactionStatus })
+  @Column({ default: 'PENDING' satisfies TransactionStatus })
   status: TransactionStatus;
 
   @ManyToOne(() => WalletEntity)

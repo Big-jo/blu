@@ -6,13 +6,14 @@ import { TRANSACTION_TYPES, TransactionStatus, TransactionStatuses } from '../..
 import { TransactionEntity } from './transaction.entity';
 import { Transform } from 'class-transformer';
 import { PageOptionsDto } from '../pagination/page-options.dto';
+import { WalletResponseDto } from '../wallet/wallet.dto';
 
 export class TransactionResponseDto extends AbstractDto {
   @ApiProperty({
     description: 'Amount',
-    example: 100.0,
+    example: "100.000",
   })
-  amount: number;
+  amount: string;
 
   @ApiProperty({
     description: 'Transaction Type',
@@ -37,12 +38,13 @@ export class TransactionResponseDto extends AbstractDto {
     example: new Date(),
   })
   createdAt: Date;
-
+  
   constructor(entity: TransactionEntity) {
     super(entity);
-    this.amount = entity.amount / 100; // Convert cents to dollars
+    this.amount = (entity.amount / 100).toFixed(3); // Convert cents to dollars
     this.type = entity.type;
     this.status = entity.status;
+    this.customerId = entity.wallet.customer?.id;
     this.createdAt = entity.createdAt;
   }
 }
